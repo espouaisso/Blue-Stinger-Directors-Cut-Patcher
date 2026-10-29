@@ -55,7 +55,22 @@ It works on Windows, Linux and macOS. On Windows, type `python` instead of `pyth
 
 ## How to build
 
-Unzip your games somewhere, then run:
+1. Download the zip from the [Releases](https://github.com/espouaisso/Blue-Stinger-Directors-Cut-Patcher/releases) page and unzip it.
+2. Unzip your games in the folders that come with it (the .gdi file and the 3 tracks):
+   - `Put JP game here`: the Japanese game, always needed
+   - `Put US game here`: the US game, for the EN version
+   - `Put PAL FR game here`: the French game, for the FR version
+3. Double click on `Start (Windows).bat` on Windows, or `Start (Mac, Linux).command` on Mac. On Linux, open a terminal in the folder and run `./"Start (Mac, Linux).command"`.
+
+It takes a few seconds. If you put both the US and the French game, you get both versions. You get a folder `Blue Stinger Director's Cut (EN)` (and/or FR) with the new GDI inside.
+
+Load the .gdi in your emulator, or put it on your ODE (GDEMU etc.) like any other GDI.
+
+On Mac, if it says the file can't be opened because it's from an unidentified developer, right click on it and choose Open.
+
+### With the command line
+
+If you prefer, you can also give the GDIs yourself:
 
 ```
 python3 patch.py en "path/to/JP/Blue Stinger (JP).gdi" "path/to/US/Blue Stinger (US).gdi"
@@ -67,9 +82,7 @@ or for the French version:
 python3 patch.py fr "path/to/JP/Blue Stinger (JP).gdi" "path/to/FR/Blue Stinger (FR).gdi"
 ```
 
-It takes a few seconds. You get a folder `Blue Stinger Director's Cut (EN)` (or FR) with the new GDI inside. You can give another output folder as last argument if you want.
-
-Load the .gdi in your emulator, or put it on your ODE (GDEMU etc.) like any other GDI.
+You can give another output folder as last argument if you want.
 
 ## What the patch does
 
@@ -95,6 +108,7 @@ The disc is then rebuilt with all the files at their new size, and all the secto
 
 ## Files
 
+- `Start (Windows).bat`, `Start (Mac, Linux).command`: launch the patcher
 - `patch.py`: the patcher
 - `lib/gdi.py`: reads and rebuilds the GDI
 - `lib/roomfmt.py`: room file format

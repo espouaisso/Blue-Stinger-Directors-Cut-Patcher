@@ -4,6 +4,8 @@
 Takes the japanese game (exe, cameras, gameplay, scripts) and puts the western
 text, textures and videos on top.
 
+  python3 patch.py                                  finds the games in this folder and
+                                                    builds every version it can
   python3 patch.py en JP.gdi US.gdi [out_dir]       english, like the US release
   python3 patch.py fr JP.gdi PAL_FR.gdi [out_dir]   french, with all the subs
 """
@@ -27,6 +29,7 @@ EXE_MD5 = {
     "us": "255213081b4a4dc23a9c2949b7883cdf",     # US v1.000
     "palfr": "e7b7484c6151ee87c2d646ed46507273",  # PAL FR v1.000
 }
+PAL_EN_MD5 = "be66765ca7db0e24bc05a5826f5e5538"  # not supported, same text as US
 NAMES = {"jp": "Japanese v1.006", "us": "US v1.000", "palfr": "PAL French v1.000"}
 DISCS = {}
 
@@ -562,13 +565,50 @@ def open_disc(key, gdi):
     return disc
 
 
-def main():
-    if len(sys.argv) not in (4, 5) or sys.argv[1] not in ("en", "fr"):
-        sys.exit(__doc__)
-    lang, jp_gdi, src_gdi = sys.argv[1:4]
+def find_games(top):
+    """looks for every .gdi under `top` and finds out which game it is with the md5"""
+    found = {}
+    for root, dirs, names in os.walk(top):
+        dirs[:] = [d for d in dirs if not d.startswith(("Blue Stinger Director's Cut", "."))]
+        for n in sorted(names):
+            if not n.lower().endswith(".gdi"):
+                continue
+            gdi = os.path.join(root, n)
+            try:
+                md5 = hashlib.md5(Disc(gdi).read("1ST_READ.BIN")).hexdigest()
+            except Exception as e:
+                print(f"skipped {gdi}: can't read it ({e})")
+                continue
+            key = next((k for k, v in EXE_MD5.items() if v == md5), None)
+            if key is None:
+                other = " (PAL english, use the US version)" if md5 == PAL_EN_MD5 else ""
+                print(f"skipped {gdi}: not a supported version{other}")
+            elif key not in found:
+                print(f"found {NAMES[key]}: {gdi}")
+                found[key] = gdi
+    return found
+
+
+def auto():
+    """no arguments: build all the versions we can with the games in this folder"""
+    top = os.path.dirname(os.path.abspath(__file__))
+    found = find_games(top)
+    todo = [(lang, src) for lang, src in (("en", "us"), ("fr", "palfr")) if src in found]
+    if "jp" not in found or not todo:
+        print("\nI need the japanese game + the US and/or PAL FR game.")
+        print("Unzip your GDIs in the 'Put ... game here' folders (the .gdi and the tracks).")
+        sys.exit(1)
+    for lang, src in todo:
+        print(f"\n=== {lang.upper()} version ===")
+        build(lang, found["jp"], found[src], None, top)
+        for d in DISCS.values():
+            d._cache.clear()
+
+
+def build(lang, jp_gdi, src_gdi, outdir=None, where="."):
     src = {"en": "us", "fr": "palfr"}[lang]
     name = {"en": "Blue Stinger Director's Cut (EN)", "fr": "Blue Stinger Director's Cut (FR)"}[lang]
-    outdir = sys.argv[4] if len(sys.argv) > 4 else name
+    outdir = outdir or os.path.join(where, name)
     jp = open_disc("jp", jp_gdi)
     open_disc(src, src_gdi)
     conv = FrenchCodes() if lang == "fr" else (lambda g: list(g))
@@ -604,6 +644,14 @@ def main():
         f.write(f"3\n1 0 {t1} {s1} track01.bin 0\n2 {l2} {t2} {s2} track02.raw 0\n"
                 f"3 {l3} {t3} {s3} track03.bin 0\n")
     print(f"done: {os.path.abspath(outdir)}")
+
+
+def main():
+    if len(sys.argv) == 1:
+        return auto()
+    if len(sys.argv) not in (4, 5) or sys.argv[1] not in ("en", "fr"):
+        sys.exit(__doc__)
+    build(*sys.argv[1:4], sys.argv[4] if len(sys.argv) > 4 else None)
 
 
 if __name__ == "__main__":

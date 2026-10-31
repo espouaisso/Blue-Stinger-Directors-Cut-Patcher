@@ -64,7 +64,7 @@ PICKUP = {
     "en": [" acquired.", "\nYou can’t carry any more."],
     "fr": [" : obtenu.", "\nTu ne peux plus en porter."],
 }
-# RSP05 = casino entrance. the 4 messages were removed in the western versions
+# RSP05 = Adult Video store entrance. the 4 messages were removed in the western versions
 RSP05 = {
     "en": ["No one under the age of 21\nis allowed beyond this point.", "Are you 21 or older?",
            "Come back when you’re older.", "Entry permitted."],

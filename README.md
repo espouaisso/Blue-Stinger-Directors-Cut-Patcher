@@ -102,7 +102,7 @@ The disc is then rebuilt with all the files at their new size, and all the secto
 ## Good to know
 
 - The title screen is still the Japanese one. I found it to be cooler than the US/PAL title, so I decide dto leave it. It's the only place with Japanese left.
-- A few lines don't exist in the western versions, so I wrote them (in English and French): the casino entrance messages (the western releases removed them), the "item acquired" message, and the save name. Everything else is the official translation.
+- A few lines don't exist in the western versions, so I wrote them (in English and French): the Adult Video store entrance messages (the western releases removed them), the "item acquired" message, and the save name. Everything else is the official translation.
 - The US version translated both "Equip" and "Use" as "Use" in the item menu. I kept it like that for authenticity sake.
 - The EN version has no subtitles on voiced lines, same as the original US release.
 
